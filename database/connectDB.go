@@ -15,6 +15,7 @@ func ConnectDB() error {
         return err
     }
     
+    // Set the global DB variable so that other packages can access it
     DB = db
 
     // AutoMigrate models
