@@ -27,6 +27,7 @@ This project implements a payment system using the Paystack and Stripe APIs for 
 
 ## Getting Started
 
+
 1. Clone the repository:
 
 ```bash
