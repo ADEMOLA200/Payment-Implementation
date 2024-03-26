@@ -3,7 +3,7 @@ package model
 type Payment struct {
     Amount    int64  `json:"amount" gorm:"null"`
     Email     string `json:"email" gorm:"null"`
-    Metadata  string `json:"metadata"` // Change type to string
+    Metadata  string `json:"metadata"` 
     Reference string `json:"reference" gorm:"null"`
 }
 
