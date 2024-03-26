@@ -1,14 +1,11 @@
-To create a README.md file, you can use any text editor or Markdown editor of your choice. Below is a basic template for a README.md file:
-
-```markdown
 # Payment Implementation
 
-This project implements a payment system using the Paystack API for processing payments. It consists of both frontend and backend components.
+This project implements a payment system using the Paystack and Stripe APIs for processing payments. It consists of both frontend and backend components.
 
 ## Features
 
 - Collect payment details from users.
-- Process payments securely using the Paystack API.
+- Process payments securely using the Paystack and Stripe APIs.
 - Display payment confirmation to users.
 - Integration with backend server for processing payments and handling business logic.
 
@@ -24,10 +21,15 @@ This project implements a payment system using the Paystack API for processing p
   - Fiber framework
   - GORM for database interaction
 
-- Payment Gateway:
+- Payment Gateways:
   - Paystack API
+  - Stripe API
 
 ## Getting Started
+
+1. Clone the repository:
+
+```bash
 
 1. Clone the repository:
 
