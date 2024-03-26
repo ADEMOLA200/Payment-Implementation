@@ -8,6 +8,7 @@ require (
 	github.com/google/uuid v1.6.0
 	gorm.io/driver/mysql v1.5.6
 	gorm.io/gorm v1.25.8
+	
 )
 
 require (
