@@ -21,6 +21,7 @@ document.getElementById("payment-form").addEventListener("submit", async (e) => 
       if (!response.ok) {
         throw new Error("Payment processing failed");
       }
+      
   
       const resultData = await response.json();
       document.getElementById("result").style.display = "block";
