@@ -51,7 +51,7 @@ func (ps *PaystackService) MakePayment(amount int64, email string, metadata map[
         return "", fmt.Errorf("failed to extract payment URL from transaction response")
     }
 
-    // Return the payment URL
+    // Return the payments URL
     return paymentUrl, nil
 }
 
