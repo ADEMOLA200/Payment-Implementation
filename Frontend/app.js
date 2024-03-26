@@ -12,13 +12,12 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        
         // Show loading indicator
         document.getElementById("loading").style.display = "block";
 
         // Initialize Paystack inline
         var handler = PaystackPop.setup({
-            key: '', // Replace with your test public key
+            key: 'pk_test_4c40126d35d265338ccd282209c39a306360642c', // Replace with your test public key
             email: email, // Use the email entered by the user
             amount: amount * 100, // Amount in kobo
             currency: 'NGN', // Currency code
