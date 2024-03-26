@@ -3,9 +3,11 @@ package services
 // Inside your services package
 
 import (
-    "github.com/cadanapay/paystack-go"
-    "github.com/ADEMOLA200/Payment-Implementation/model"
-    "fmt"
+	"errors"
+	"fmt"
+
+	"github.com/ADEMOLA200/Payment-Implementation/model"
+	"github.com/cadanapay/paystack-go"
 )
 
 // Inside your services package
@@ -39,19 +41,18 @@ func (ps *PaystackService) MakePayment(amount int64, email string, metadata map[
     // Initialize a new transaction
     transactionResponse, err := ps.Client.Transaction.Initialize(transactionRequest)
     if err != nil {
-        return "", fmt.Errorf("failed to initialize transaction: %v, Paystack response: %v", err, transactionResponse)
+        return "", fmt.Errorf("failed to initialize transaction: %v", err)
     }
 
     // Log the transactionResponse for debugging
     fmt.Printf("Transaction Response: %+v\n", transactionResponse)
 
-    // Extract the payment URL from the transaction response
+    // Check if the transactionResponse contains the authorization URL
     paymentUrl, ok := transactionResponse["authorization_url"].(string)
-    if !ok {
-        return "", fmt.Errorf("failed to extract payment URL from transaction response")
+    if !ok || paymentUrl == "" {
+        return "", errors.New("authorization URL not provided in transaction response")
     }
 
-    // Return the payments URL
+    // Return the payment URL
     return paymentUrl, nil
 }
-
