@@ -7,6 +7,7 @@ import (
 )
 
 func SetupRoutes(app *fiber.App) {
+	// Setup routes
     api := app.Group("/api", middlewares.CorsMiddleware(), middlewares.LoggingMiddleware)
 
     api.Post("/makePayment", controller.MakePayment)
