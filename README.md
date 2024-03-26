@@ -25,6 +25,11 @@ This project implements a payment system using the Paystack and Stripe APIs for 
   - Paystack API
   - Stripe API
 
+![Editor](https://imgur.com/NnHqlFR)
+
+![Postman](https://imgur.com/Cx4ZXnw)
+
+
 ## Getting Started
 
 
@@ -53,6 +58,10 @@ git clone <repository_url>
    - Submit the form to process the payment.
    - Check the backend logs for payment processing details.
 
+![Payment System](https://imgur.com/VXD0uda)
+
+![Payment System](https://imgur.com/HITKEPc)
+
 ## Configuration
 
 - Backend:
@@ -67,5 +76,3 @@ git clone <repository_url>
 This project is licensed under the [MIT License](LICENSE).
 
 ```
-
-Feel free to customize the content according to your project's specifics. Save this content in a file named `README.md` in the root directory of your project.
