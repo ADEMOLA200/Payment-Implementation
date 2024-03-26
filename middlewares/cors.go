@@ -1,10 +1,12 @@
 package middlewares
 
-import "github.com/gofiber/fiber/v2"
+import (
+    "github.com/gofiber/fiber/v2"
+)
 
-// CorsMiddleware handles CORS headers for requests.
 func CorsMiddleware() fiber.Handler {
     return func(c *fiber.Ctx) error {
+        // Set CORS headers
         c.Set("Access-Control-Allow-Origin", "*")
         c.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
         c.Set("Access-Control-Allow-Headers", "Content-Type, Origin, Authorization")
@@ -15,6 +17,7 @@ func CorsMiddleware() fiber.Handler {
             return nil
         }
 
+        // Continue to the next middleware or route handler
         return c.Next()
     }
 }

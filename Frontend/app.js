@@ -12,6 +12,9 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
+        // Show loading indicator
+        document.getElementById("loading").style.display = "block";
+
         // Initialize Paystack inline
         var handler = PaystackPop.setup({
             key: 'pk_test_4c40126d35d265338ccd282209c39a306360642c', // Replace with your test public key
@@ -30,9 +33,23 @@ document.addEventListener("DOMContentLoaded", function() {
             },
             callback: function(response) {
                 // Handle the response here
-                alert('Payment successful. Reference: ' + response.reference);
+                try {
+                    // Handle the response here
+                    document.getElementById("result").style.display = "block";
+                    document.getElementById("message").textContent =
+                        "Payment processed successfully. Reference: " +
+                        response.reference;
+                } catch (error) {
+                    document.getElementById("result").style.display = "block";
+                    document.getElementById("message").textContent =
+                        "Error processing payment: " + error.message;
+                } finally {
+                    // Hide loading indicator
+                    document.getElementById("loading").style.display = "none";
+                }
             },
             onClose: function() {
+                // Handle payment modal close
                 alert('Payment closed.');
             }
         });

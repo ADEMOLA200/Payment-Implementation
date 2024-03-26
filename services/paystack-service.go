@@ -1,67 +1,57 @@
 package services
 
-import (
-	"encoding/json"
-	"fmt"
+// Inside your services package
 
-	"github.com/ADEMOLA200/Payment-Implementation/model"
-	"github.com/cadanapay/paystack-go"
+import (
+    "github.com/cadanapay/paystack-go"
+    "github.com/ADEMOLA200/Payment-Implementation/model"
+    "fmt"
 )
 
-
+// Inside your services package
 type PaystackService struct {
-    SecretKey string // Change secretKey to SecretKey
-    Client    *paystack.Client
+    SecretKey string          // Secret key for Paystack API
+    Client    *paystack.Client // Paystack client
+	DebugMode bool            // Flag to indicate debug mode
+
 }
 
+
+// Modify the Initialize method to accept the secret key as an argument
 func (ps *PaystackService) Initialize(secretKey string) {
+    // Initialize Paystack client with the self.SecretKey
     ps.SecretKey = secretKey
     ps.Client = paystack.NewClient(secretKey, nil)
 }
 
-func (ps *PaystackService) MakePayment(amount int64, email string, metadata map[string]interface{}, card *model.CardDetails) (*model.Payment, error) {
+func (ps *PaystackService) MakePayment(amount int64, email string, metadata map[string]interface{}, card *model.CardDetails) (string, error) {
     // Convert amount from int64 to float32 (kobo)
     amountKobo := float32(amount) / 100 // Convert Naira to kobo
 
-    // Convert metadata map to JSON string
-    metadataJSON, err := json.Marshal(metadata)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal metadata to JSON: %v", err)
+    // Construct the transaction request body
+    transactionRequest := &paystack.TransactionRequest{
+        Amount:   amountKobo,
+        Email:    email,
+        Metadata: metadata, // Assign the metadata map directly
+        //Card:     card.ToPaystackCard(), // Convert model.CardDetails to paystack.CardDetails
     }
-
-   // Construct the transaction request body
-	transactionRequest := &paystack.TransactionRequest{
-		Amount:   amountKobo,
-		Email:    email,
-		Metadata: metadata, // Assign the metadata map directly
-		//Card:     card.ToPaystackCard(), // Convert model.CardDetails to paystack.CardDetails
-	}
 
     // Initialize a new transaction
     transactionResponse, err := ps.Client.Transaction.Initialize(transactionRequest)
     if err != nil {
-        return nil, fmt.Errorf("failed to initialize transaction: %v", err)
+        return "", fmt.Errorf("failed to initialize transaction: %v, Paystack response: %v", err, transactionResponse)
     }
 
-    // Extract the reference from the transaction response
-    reference, ok := transactionResponse["data"].(map[string]interface{})["reference"].(string)
+    // Log the transactionResponse for debugging
+    fmt.Printf("Transaction Response: %+v\n", transactionResponse)
+
+    // Extract the payment URL from the transaction response
+    paymentUrl, ok := transactionResponse["authorization_url"].(string)
     if !ok {
-        return nil, fmt.Errorf("failed to extract reference from transaction response")
+        return "", fmt.Errorf("failed to extract payment URL from transaction response")
     }
 
-    // Verify the transaction, which creates a charge on the user's account
-    _, err = ps.Client.Transaction.Verify(reference)
-    if err != nil {
-        return nil, fmt.Errorf("failed to verify transaction: %v", err)
-    }
-
-    // Create a Payment object with the retrieved details
-    payment := model.NewPayment()
-    payment.Amount = amount
-    payment.Email = email
-    payment.Metadata = string(metadataJSON) // Assign the JSON string to Metadata
-    payment.Reference = reference
-
-    return payment, nil
+    // Return the payment URL
+    return paymentUrl, nil
 }
 

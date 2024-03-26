@@ -7,3 +7,10 @@
   },
   "reference": "PAY123456789"
 }
+
+
+-- Reccomended
+{
+    "amount": 10000,
+    "email": "user@example.com"
+}

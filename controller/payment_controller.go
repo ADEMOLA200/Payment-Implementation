@@ -1,15 +1,39 @@
 package controller
 
 import (
-	"encoding/json"
+	"errors"
+	"fmt"
+	"log"
 
 	"github.com/ADEMOLA200/Payment-Implementation/database"
 	"github.com/ADEMOLA200/Payment-Implementation/model"
-	_ "github.com/ADEMOLA200/Payment-Implementation/services"
+	"github.com/ADEMOLA200/Payment-Implementation/services"
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid" // Import the UUID package
+	"github.com/google/uuid"
 )
 
+var paystackService *services.PaystackService
+const paystackTestKey = "sk_test_b54a660ada3b30d7d3b9791e529a043f6f198f9e"
+
+// Initialize the Paystack service with the provided secret key
+func setupPaystackService(secretKey string) error {
+    var err error
+    // Initialize Paystack service with the secret key
+    paystackService, err = InitializePaystackService(secretKey)
+    if err != nil {
+        return fmt.Errorf("failed to initialize Paystack service: %w", err)
+    }
+    return nil
+}
+
+// init function to set up Paystack service when the package is imported
+func init() {
+    if err := setupPaystackService(paystackTestKey); err != nil {
+        log.Fatalf("Failed to set up Paystack service: %v", err)
+    }
+}
+
+// MakePayment handles payment requests
 func MakePayment(c *fiber.Ctx) error {
     // Parse the request body into PaymentRequest struct
     var request model.PaymentRequest
@@ -20,17 +44,21 @@ func MakePayment(c *fiber.Ctx) error {
     // Generate a new UUID as the reference
     reference := uuid.New().String()
 
-    // Convert metadata map to JSON string
-    metadataJSON, err := json.Marshal(make(map[string]interface{})) // Initialize an empty map and marshal it to JSON
+    // Make payment using Paystack service
+    paymentUrl, err := paystackService.MakePayment(request.Amount, request.Email, nil, nil)
     if err != nil {
         return err
+    }
+
+    // Ensure that the payment URL is not empty
+    if paymentUrl == "" {
+        return errors.New("payment URL not provided by Paystack service")
     }
 
     // Create a new payment record
     payment := model.Payment{
         Amount:    request.Amount,
         Email:     request.Email,
-        Metadata:  string(metadataJSON), // Assign the JSON string to Metadata
         Reference: reference, // Use the generated UUID as the reference
     }
 
@@ -39,6 +67,6 @@ func MakePayment(c *fiber.Ctx) error {
         return err
     }
 
-    // Return success response
-    return c.SendString("Subscription payment made successfully")
+    // Redirect the user to the payment page
+    return c.Redirect(paymentUrl)
 }

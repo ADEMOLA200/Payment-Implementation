@@ -1,23 +1,22 @@
 package controller
 
 import (
-    "fmt"
-    "os"
     "github.com/ADEMOLA200/Payment-Implementation/services"
+    "errors"
 )
 
-func InitializePaystackService() (*services.PaystackService, error) {
-	// Get the secret key from environment variable
-	secretKey := os.Getenv("PAYSTACK_SECRET_KEY")
-	if secretKey == "" {
-		return nil, fmt.Errorf("secret key not found in environment variable")
-	}
+// InitializePaystackService initializes the Paystack service with the provided secret key
+func InitializePaystackService(secretKey string) (*services.PaystackService, error) {
+    // Validate secret key
+    if secretKey == "" {
+        return nil, errors.New("secret key cannot be empty")
+    }
 
-	// Create an instance of PaystackService
-	paystackService := &services.PaystackService{}
+    // Create an instance of PaystackService
+    paystackService := &services.PaystackService{}
 
-	// Initialize PaystackService with the secret key
-	paystackService.Initialize(secretKey)
+    // Initialize PaystackService with the secret key
+    paystackService.Initialize(secretKey)
 
-	return paystackService, nil
+    return paystackService, nil
 }
