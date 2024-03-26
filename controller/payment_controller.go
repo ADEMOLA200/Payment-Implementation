@@ -1,20 +1,20 @@
 package controller
 
 import (
-	"errors"
-	"fmt"
-	"log"
+    "encoding/json"
+    "errors"
+    "fmt"
+    "log"
 
-	"github.com/ADEMOLA200/Payment-Implementation/database"
-	"github.com/ADEMOLA200/Payment-Implementation/model"
-	"github.com/ADEMOLA200/Payment-Implementation/services"
-	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
+    "github.com/ADEMOLA200/Payment-Implementation/database"
+    "github.com/ADEMOLA200/Payment-Implementation/model"
+    "github.com/ADEMOLA200/Payment-Implementation/services"
+    "github.com/gofiber/fiber/v2"
+    "github.com/google/uuid"
 )
 
 var paystackService *services.PaystackService
-
-const paystackTestKey = ""
+const paystackTestKey = "sk_test_b54a660ada3b30d7d3b9791e529a043f6f198f9e"
 
 // Initialize the Paystack service with the provided secret key
 func setupPaystackService(secretKey string) error {
@@ -45,8 +45,20 @@ func MakePayment(c *fiber.Ctx) error {
     // Generate a new UUID as the reference
     reference := uuid.New().String()
 
+    // Serialize metadata to JSON string
+    metadataJSON, err := model.SerializeMetadata(request.Metadata)
+    if err != nil {
+        return err
+    }
+
+    // Convert metadata to map[string]interface{}
+    var metadataMap map[string]interface{}
+    if err := json.Unmarshal([]byte(metadataJSON), &metadataMap); err != nil {
+        return err
+    }
+
     // Make payment using Paystack service
-    paymentUrl, err := paystackService.MakePayment(request.Amount, request.Email, nil, nil)
+    paymentUrl, err := paystackService.MakePayment(request.Amount, request.Email, metadataMap, nil)
     if err != nil {
         return err
     }
@@ -60,6 +72,7 @@ func MakePayment(c *fiber.Ctx) error {
     payment := model.Payment{
         Amount:    request.Amount,
         Email:     request.Email,
+        Metadata:  metadataJSON, // Use the serialized metadata JSON string
         Reference: reference, // Use the generated UUID as the reference
     }
 
@@ -68,6 +81,8 @@ func MakePayment(c *fiber.Ctx) error {
         return err
     }
 
-    // Redirect the user to the payment page
-    return c.Redirect(paymentUrl)
+    // Return the payment URL to the client
+    return c.JSON(fiber.Map{
+        "paymentUrl": paymentUrl,
+    })
 }
