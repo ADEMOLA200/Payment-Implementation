@@ -14,7 +14,7 @@ import (
 
 func main() {
     // Define test secret key
-    const paystackTestKey = "sk_test_b54a660ada3b30d7d3b9791e529a043f6f198f9e"
+    const paystackTestKey = ""
 
     database.ConnectDB()
     

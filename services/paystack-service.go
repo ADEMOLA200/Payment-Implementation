@@ -26,7 +26,7 @@ func (ps *PaystackService) Initialize(secretKey string) {
 
 func (ps *PaystackService) MakePayment(amount int64, email string, metadata map[string]interface{}, card *model.CardDetails) (string, error) {
     // Convert amount from int64 to float32 (kobo)
-    amountKobo := float32(amount) / 100 // Convert Naira to kobo
+    amountKobo := float32(amount) * 100 // Convert Naira to kobo
 
     // Construct the transaction request body
     transactionRequest := &paystack.TransactionRequest{

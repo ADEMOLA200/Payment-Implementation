@@ -13,7 +13,7 @@ import (
 )
 
 var paystackService *services.PaystackService
-const paystackTestKey = "sk_test_b54a660ada3b30d7d3b9791e529a043f6f198f9e"
+const paystackTestKey = ""
 
 // Initialize the Paystack service with the provided secret key
 func setupPaystackService(secretKey string) error {
