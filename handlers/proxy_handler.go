@@ -37,6 +37,6 @@ func ProxyHandler(c *fiber.Ctx) error {
 	// Copy status code
 	c.Status(resp.StatusCode())
 
-	// Copy response body
+	// Copy - response body
 	return c.Send(resp.Body())
 }
