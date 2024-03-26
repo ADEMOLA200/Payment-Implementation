@@ -13,6 +13,7 @@ import (
 )
 
 var paystackService *services.PaystackService
+
 const paystackTestKey = ""
 
 // Initialize the Paystack service with the provided secret key
