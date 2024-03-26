@@ -17,6 +17,7 @@ func CorsMiddleware() fiber.Handler {
             return nil
         }
 
+        
         // Continue to the next middleware or route handler
         return c.Next()
     }
