@@ -9,17 +9,24 @@ import (
 var DB *gorm.DB
 
 func ConnectDB() error {
-    dsn := "root:rootroot@tcp(127.0.0.1:3306)/go_paystack?charset=utf8mb4&parseTime=True&loc=Local"
-    db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-    if err != nil {
-        return err
-    }
-    
-    // Set the global DB variable so that other packages can access it
-    DB = db
+    dbUser := os.Getenv("DB_USER")
+    dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
 
-    // AutoMigrate models
-    if err := DB.AutoMigrate(&model.Payment{}); err != nil {
+    if dbUser == "" || dbPassword == "" {
+        panic("DB_USER or DB_PASSWORD environment variables are not set")
+    }
+
+    dsn := fmt.Sprintf("%s:%s@/%s", dbUser, dbPassword, dbName)
+    db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+
+    if err != nil {
+        panic("could not connect to the database: " + err.Error())
+    }
+
+    if err := DB.AutoMigrate(
+	    &model.Payment{}
+    ); err != nil {
         return err
     }
 
