@@ -70,7 +70,7 @@ git clone <repository_url>
 
 - Frontend:
   - Update the Paystack public key in the JavaScript code (`app.js`).
-
+  - Update........
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
